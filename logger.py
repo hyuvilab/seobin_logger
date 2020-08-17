@@ -11,6 +11,8 @@ from tqdm import tqdm
 
 '''
 TODO:   * add tensorboard
+            >> handle refreshing!!!
+
         * add excel
 
         * tqdm exit problem
@@ -30,8 +32,6 @@ class BaseLogger(object):
 
     def step(self):
         raise NotImplementedError
-
-
 
 
 
@@ -73,8 +73,7 @@ class TensorboardLogger(BaseLogger):
     r'''
     TensorboardLogger
 
-    tensorboard --logdir tensorboard_test/ --host 166.104.140.111
-
+        [*] tensorboard --logdir tensorboard_test/ --host 166.104.140.111
     '''
     def __init__(self, log_dir=None):
         super(TensorboardLogger, self).__init__()
@@ -87,11 +86,6 @@ class TensorboardLogger(BaseLogger):
     def step(self, log_dict):
         for key in log_dict.keys():
             self.writer.add_scalar(key, log_dict[key], self.main_logger.global_iter)
-
-    
-
-
-
 
 
 
