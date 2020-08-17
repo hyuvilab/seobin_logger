@@ -12,6 +12,7 @@ from tqdm import tqdm
 '''
 TODO:   * add tensorboard
             >> handle refreshing!!!
+            >> set color??
 
         * add excel
 
