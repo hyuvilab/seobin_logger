@@ -1,4 +1,11 @@
 # seobin_logger
 
 
-This a integrated logger for machine learning..
+An integrated logger for machine learning..
+
+
+## Installation
+
+```console
+foo@bar:~/seobin_logger $ pip install .
+```
