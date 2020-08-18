@@ -6,7 +6,9 @@ TODO:   * add tensorboard
         * add excel
         * add matplotlib?
 
-        * tqdm exit problem
+        * Need to handle order of loggers
+        * Test time load for all loggers!
+        * Think for a better implementation than __del__ in MainLogger!
 '''
 class BaseLogger(object):
     def __init__(self):
@@ -30,7 +32,7 @@ class MainLogger(BaseLogger):
     [*] state_list: (state_name)
 
     '''
-    def __init__(self, state_list, train_iter, loggers=[]):
+    def __init__(self, state_list, train_iter=None, loggers=[]):
         self.global_iter = 0
         self.train_iter = train_iter
         self.loggers = loggers
@@ -40,6 +42,9 @@ class MainLogger(BaseLogger):
     def __le__(self, x):
         x.main_logger = self
         self.loggers.append(x)
+
+    def __del__(self):
+        self.end()
 
     def __compile_state_list(self, state_list):
         self.state_dict = {}
@@ -74,8 +79,13 @@ class MainLogger(BaseLogger):
         assert self.__started, 'Need to start logger before step'
         self.global_iter += 1
         self.__update_state_dict(log_dict)
-
         [logger.step(log_dict) for logger in self.loggers]
+
+    def end(self):
+        for logger in self.loggers:
+            if(hasattr(logger, 'end')):
+                logger.end()
+
 
 
 
@@ -83,7 +93,7 @@ class MainLogger(BaseLogger):
 
 class RunningAverageMeter(object):
     """Computes and stores the average and current value"""
-    """from https://github.com/rtqichen/torchdiffeq/blob/master/examples/ode_demo.py"""
+    """Code from https://github.com/rtqichen/torchdiffeq/blob/master/examples/ode_demo.py"""
 
     def __init__(self, momentum=0.99):
         self.momentum = momentum
