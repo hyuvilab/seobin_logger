@@ -1,10 +1,8 @@
 '''
-TODO:   * add tensorboard
-            >> handle refreshing!!!
-            >> set color??
-
-        * add excel
-        * add matplotlib?
+TODO:   
+        * add matplotlib
+        * add numpy
+        * add very simple one
 
         * Need to handle order of loggers
         * Test time load for all loggers!

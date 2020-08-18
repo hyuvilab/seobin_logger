@@ -8,5 +8,7 @@ setup(name='seobin_logger',
       author='Seobin Park',
       author_email='seobinpark@hanyang.ac.kr',
       license='MIT',
+      # Fill requirements!!
+      install_requires=[],
       packages=['seobin_logger'],
       zip_safe=False)
