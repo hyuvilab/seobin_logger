@@ -48,6 +48,9 @@ class TQDMLogger(BaseLogger):
                 key, self.__verbose_state(key), self.__verbose_state(key, avg=True))
             self.state_tqdm[key].set_description_str(desc_string)
 
+    def validation(self, val):
+        self.validation_tqdm.set_description_str('\t >> validation: {:.3f}'.format(val))
+
     def end(self):
         self.global_iter_tqdm.close()
         [this_tqdm.close() for this_tqdm in self.state_tqdm.values()]

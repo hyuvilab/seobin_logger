@@ -72,12 +72,18 @@ class MainLogger(BaseLogger):
     def reset_state(self, key):
         self.state_dict[key].reset()
 
-    def step(self, log_dict, validation_hook=None):
+    def step(self, log_dict, validation_closure=None):
         assert set(log_dict.keys()) == set(self.state_dict.keys()), 'Need to feed all states.'
         assert self.__started, 'Need to start logger before step'
         self.global_iter += 1
         self.__update_state_dict(log_dict)
         [logger.step(log_dict) for logger in self.loggers]
+        if(validation_closure):
+            val = validation_closure()
+            for logger in self.loggers:
+                if(hasattr(logger, 'validation')):
+                    logger.validation(val)
+
 
     def end(self):
         for logger in self.loggers:
