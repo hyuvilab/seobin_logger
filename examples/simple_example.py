@@ -32,7 +32,5 @@ if __name__=='__main__':
             'noisy_linear': i + random.random()*0.05,
             'noisy_sinusoid': math.sin(i/20.) + random.random()*0.05,
         })
-        if(i % 5 == 0):
-            train_logger.set_info('some break at {}'.format(i))
         sleep(args.time_interval)
 

@@ -29,7 +29,6 @@ class TQDMLogger(BaseLogger):
 
     def start(self):
         super(TQDMLogger, self).start()
-
         self.global_iter_tqdm = tqdm(total=self.train_iter, position=1)
         self.state_tqdm = {}
         for i, state in enumerate(self.state_dict.keys()):
@@ -38,7 +37,7 @@ class TQDMLogger(BaseLogger):
         self.void_tqdm = tqdm(total=0, bar_format='{desc}', position=len(self.state_dict)+3)
         self.info_verbose_tqdm = tqdm(total=0, bar_format='{desc}', position=len(self.state_dict)+4)
 
-    def set_info(self, info_str):
+    def tqdm_set_info(self, info_str):
         self.info_verbose_tqdm.set_description_str('\t\t[* {}] '.format(self.main_logger.global_iter) + info_str)
 
     def step(self, log_dict):

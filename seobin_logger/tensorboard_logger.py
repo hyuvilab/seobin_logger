@@ -3,6 +3,8 @@ from torch.utils.tensorboard import SummaryWriter
 import os
 import subprocess
 # https://pytorch.org/docs/stable/tensorboard.html
+# https://www.tensorflow.org/tensorboard/image_summaries
+# https://www.youtube.com/watch?v=91J7iQLq-6U
 '''
 TODO:   * Make tensorboard webserver refreshing real-time >> let's not implement this.
         * Run tensorboard server on .start() given on flag >> done.
@@ -34,9 +36,16 @@ class TensorboardLogger(BaseLogger):
                 stderr=f
             )
 
+    def tensorboard_plot_image(self, name, image):
+        # Handle preprocessing image here?
+        self.writer.add_image(name, image, self.main_logger.global_iter)
+
     def step(self, log_dict):
         for key in log_dict.keys():
             self.writer.add_scalar(key, log_dict[key], self.main_logger.global_iter)
+
+    def validation(self, val):
+        self.writer.add_scalar('validation', val, self.main_logger.global_iter)
 
     def end(self):
         if(self.run_server and hasattr(self, 'tensorboard_proc')):
