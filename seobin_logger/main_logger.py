@@ -58,7 +58,7 @@ class MainLogger(BaseLogger):
         for logger in self.loggers:
             if(hasattr(logger, name)):
                 # Not handling multiple logger with same function here!
-                return logger.name  
+                return getattr(logger, name)
         raise AttributeError("'MainLogger' object has no attributre '{}'".format(name))
 
     def __compile_state_list(self, state_list):

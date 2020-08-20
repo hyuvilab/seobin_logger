@@ -13,10 +13,10 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--train-iteration', type=int, default=500)
     parser.add_argument('--time-interval', type=float, default=0.5)
-    #parser.add_argument('--tensorboard-log', default='test')
-    parser.add_argument('--tensorboard-log', default=None)
-    #parser.add_argument('--tensorboard-host', default='166.104.140.111')
-    parser.add_argument('--tensorboard-host', default=None)
+    parser.add_argument('--tensorboard-log', default='test')
+    #parser.add_argument('--tensorboard-log', default=None)
+    parser.add_argument('--tensorboard-host', default='166.104.140.111')
+    #parser.add_argument('--tensorboard-host', default=None)
     args = parser.parse_args()
     print('[*] Logger validation test start\n')
 
@@ -29,6 +29,7 @@ if __name__=='__main__':
             host=args.tensorboard_host
         ) 
     train_logger <= seobin_logger.TQDMLogger() 
+    train_logger <= seobin_logger.ExcelLogger('save.xlsx')
     train_logger.start()
 
     for i in range(args.train_iteration):

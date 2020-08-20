@@ -2,6 +2,8 @@ from .main_logger import BaseLogger
 from torch.utils.tensorboard import SummaryWriter
 import os
 import subprocess
+# https://tensorboardx.readthedocs.io/en/latest/tensorboard.html
+
 # https://pytorch.org/docs/stable/tensorboard.html
 # https://www.tensorflow.org/tensorboard/image_summaries
 # https://www.youtube.com/watch?v=91J7iQLq-6U
