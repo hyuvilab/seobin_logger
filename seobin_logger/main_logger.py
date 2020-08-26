@@ -101,7 +101,7 @@ class MainLogger(BaseLogger):
 
     def __gt__(self, x):
         assert self.save_logger is not None, 'Need to call start_save_logger before start!'
-        assert not self.__started, 'Need to feed loggers before start'
+        assert self.__started, 'Need to feed offline loggers after start'
         assert not self.__ended, 'Logger has ended'
         assert type(x) in offline_logger_list, 'Need to feed offline loggers only'
         self.save_logger <= x
