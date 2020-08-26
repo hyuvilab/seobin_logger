@@ -32,7 +32,8 @@ if __name__=='__main__':
             host=args.tensorboard_host
         ) 
     train_logger <= seobin_logger.TQDMLogger() 
-    #train_logger <= seobin_logger.ExcelLogger('save.xlsx')
+    train_logger <= seobin_logger.NumpyLogger('test.npz') 
+    train_logger <= seobin_logger.ExcelLogger('save.xlsx')
     train_logger.start()
 
     for i in range(args.train_iteration):

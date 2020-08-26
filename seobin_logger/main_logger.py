@@ -1,13 +1,17 @@
 '''
 TODO:   
         * add matplotlib
-        * add numpy
         * add very simple one
 
         * Need to handle order of loggers
         * Test time load for all loggers!
-        * Think for a better implementation than __del__ in MainLogger!
 '''
+import atexit
+from .excel_logger import ExcelLogger
+from .numpy_logger import NumpyLogger
+offline_logger_list = [ExcelLogger, NumpyLogger]
+
+
 
 
 class BaseLogger(object):
@@ -19,8 +23,41 @@ class BaseLogger(object):
         self.state_dict = self.main_logger.state_dict
 
     def step(self):
-        raise NotImplementedError
+        if(not type(self) in offline_logger_list): raise NotImplementedError
 
+    def end(self):
+        pass
+
+
+
+
+class SaveLogger(BaseLogger):
+    def __init__(self):
+        super(SaveLogger, self).__init__()
+        self.state_numbers = {}
+        self.offline_loggers = []
+
+    def __le__(self, x):
+        x.state_numbers = self.state_numbers
+        self.offline_loggers.append(x)
+
+    def start(self):
+        super(SaveLogger, self).start()
+        for state in self.state_dict.keys():
+            self.state_numbers[state] = []
+        self.state_numbers['validation'] = []
+
+    def step(self, log_dict):
+        for key in log_dict.keys():
+            self.state_numbers[key].append([self.main_logger.global_iter, log_dict[key]])
+
+    def validation(self, val):
+        self.state_numbers['validation'].append([self.main_logger.global_iter, val])
+
+    def end(self):
+        for logger in self.offline_loggers:
+            if(hasattr(logger, 'end')):
+                logger.end()
 
 
 
@@ -41,18 +78,24 @@ class MainLogger(BaseLogger):
         self.global_iter = 0
         self.train_iter = train_iter
         self.loggers = []
+        self.save_logger = None
         self.valid_val = None
         self.valid_val_b = None
         self.__compile_state_list(state_list)
         self.__started = False
         self.__ended = False
+        atexit.register(self.end)
 
     def __le__(self, x):
         x.main_logger = self
-        self.loggers.append(x)
-
-    def __del__(self):
-        self.end()
+        if(type(x) in offline_logger_list):
+            if(self.save_logger is None):
+                self.save_logger = SaveLogger()
+                self.save_logger.main_logger = self
+                self.loggers.append(self.save_logger)
+            self.save_logger <= x
+        else:
+            self.loggers.append(x)
 
     def __getattr__(self, name):
         for logger in self.loggers:

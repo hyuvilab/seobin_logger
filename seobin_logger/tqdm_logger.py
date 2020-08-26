@@ -9,8 +9,7 @@ TODO:   * Need to fix wierd output on Interrupt signal >> fixed
 
 
 class TQDMLogger(BaseLogger):
-    r'''
-    TQDMLogger
+    r''' TQDM Logger
 
     '''
     def __init__(self):

@@ -1,4 +1,4 @@
-from .main_logger import BaseLogger
+#from .main_logger import BaseLogger
 from openpyxl import Workbook
 # https://myjamong.tistory.com/51
 '''
@@ -7,20 +7,39 @@ TODO:   * Check time load
 '''
 
 
-class ExcelLogger(BaseLogger):
-    def __init__(self, save_dir):
-        self.save_dir = save_dir
+#class ExcelLogger(BaseLogger):
+class ExcelLogger():
+    r''' Excel Logger
+    (Depricated. It is not optimized.)
 
-    def start(self):
-        super(ExcelLogger, self).start()
+    args:   
+        save_path: *.xlsx file name.
+
+    '''
+    def __init__(self, save_path):
+        self.save_path = save_path
         self.workbook = Workbook()
-        for i, key in enumerate(self.state_dict.keys()):
-            self.workbook.active.cell(1, i+1, key)
+        self.state_numbers = {}
 
-    def step(self, log_dict):
-        for i, key in enumerate(log_dict.keys()):
-            self.workbook.active.cell(self.main_logger.global_iter+1, i+1, log_dict[key])
-        self.workbook.save(self.save_dir)
+    def __make_row(self, i):
+        states = list(self.state_numbers.keys())
+        states.remove('validation')
+        row = [self.state_numbers[state][i][1] for state in states]
+        if(i < len(self.state_numbers['validation'])):
+            row += [self.state_numbers['validation'][i][1]]
+        return row
 
     def end(self):
+        self.workbook.active.append(list(self.state_numbers.keys()))
+        max_length = max([len(self.state_numbers[state]) for state in self.state_numbers.keys()])
+        for i in range(max_length):
+            row = self.__make_row(i)
+            self.workbook.active.append(row)
+        '''
+        # This is a row-wise code.
+        for state in self.state_numbers.keys():
+            row = [state] + [self.state_numbers[state][i][1] for i in range(len(self.state_numbers[state]))]
+            self.workbook.active.append(row)
+        '''
+        self.workbook.save(self.save_path)
         self.workbook.close()
