@@ -8,8 +8,6 @@ TODO:
         * Test time load for all loggers!
         * Think for a better implementation than __del__ in MainLogger!
 '''
-import signal
-
 
 
 class BaseLogger(object):
@@ -115,7 +113,7 @@ class MainLogger(BaseLogger):
                 best_valid = True
             if(best_valid):
                 self.valid_val_b = self.valid_val
-                best_validation_closure()
+                if(best_validation_closure): best_validation_closure()
             for logger in self.loggers:
                 if(hasattr(logger, 'validation')):
                     logger.validation(self.valid_val)
