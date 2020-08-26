@@ -38,7 +38,7 @@ class TQDMLogger(BaseLogger):
         self.info_verbose_tqdm = tqdm(total=0, bar_format='{desc}', position=len(self.state_dict)+4)
 
     def tqdm_set_info(self, info_str):
-        self.info_verbose_tqdm.set_description_str('\t\t[* {}] '.format(self.main_logger.global_iter) + info_str)
+        self.info_verbose_tqdm.set_description_str('\t\t[* it{}] '.format(self.main_logger.global_iter) + info_str)
 
     def step(self, log_dict):
         self.global_iter_tqdm.update()

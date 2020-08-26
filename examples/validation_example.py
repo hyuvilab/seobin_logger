@@ -8,6 +8,9 @@ from time import sleep
 def validation(input_number):
     return input_number * 10
 
+def best_validation(logger):
+    logger.tqdm_set_info('Got best validation value: {:.3f}'.format(logger.valid_val_b))
+
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
@@ -29,7 +32,7 @@ if __name__=='__main__':
             host=args.tensorboard_host
         ) 
     train_logger <= seobin_logger.TQDMLogger() 
-    train_logger <= seobin_logger.ExcelLogger('save.xlsx')
+    #train_logger <= seobin_logger.ExcelLogger('save.xlsx')
     train_logger.start()
 
     for i in range(args.train_iteration):
@@ -38,9 +41,8 @@ if __name__=='__main__':
             'noisy_linear': i + random.random()*0.05,
             'noisy_sinusoid': math.sin(i/20.) + random.random()*0.05,
             }, validation_closure=lambda: validation(random.random()),
-            validation_freq=10
+            best_validation_closure=lambda: best_validation(train_logger),
+            validation_freq=10, validation_mode='min'
         )
-        if(i % 5 == 0):
-            train_logger.tqdm_set_info('some break at {}'.format(i))
         sleep(args.time_interval)
 

@@ -28,21 +28,23 @@ class BaseLogger(object):
 
 
 class MainLogger(BaseLogger):
-    r'''
-    TrainLogger
+    r''' Main Logger to initiate logging
 
-    [*] state_list: (state_name)
+    Args: 
+        state_list: List of states. They should all be fed to step afterwards.
+        train_iter: Number of whole training steps. Default is None.
 
-        > start
-        > step
-        > end
-
+    Functions:
+        start: Starts the logger
+        step: Main function for logging step. 
+        end: Ends the logger safely. 
     '''
-    def __init__(self, state_list, train_iter=None, loggers=[]):
+    def __init__(self, state_list, train_iter=None):
         self.global_iter = 0
         self.train_iter = train_iter
-        self.loggers = loggers
-        self.validation_value = None
+        self.loggers = []
+        self.valid_val = None
+        self.valid_val_b = None
         self.__compile_state_list(state_list)
         self.__started = False
         self.__ended = False
@@ -86,18 +88,37 @@ class MainLogger(BaseLogger):
     def reset_state(self, key):
         self.state_dict[key].reset()
 
-    def step(self, log_dict, validation_closure=None, validation_freq=1):
-        assert set(log_dict.keys()) == set(self.state_dict.keys()), 'Need to feed all states.'
+    def step(self, log_dict, validation_closure=None, validation_freq=1, 
+            best_validation_closure=None, validation_mode='max'):
+
         assert self.__started and not self.__ended, 'Step must be called between .start() and .end()'
+        assert set(log_dict.keys()) == set(self.state_dict.keys()), 'Need to feed all states.'
+        assert validation_mode in ['min', 'max'], 'validation_mode should be min or max'
+
         self.global_iter += 1
+        if(self.train_iter and self.global_iter > self.train_iter):
+            self.end()
+            return
         self.__update_state_dict(log_dict)
         [logger.step(log_dict) for logger in self.loggers]
 
         if(validation_closure and self.global_iter % validation_freq == 0):
-            self.validation_value = validation_closure()
+            self.valid_val = validation_closure()
+            if(self.valid_val_b):
+                if(validation_mode=='min' and self.valid_val < self.valid_val_b):
+                    best_valid = True
+                elif(validation_mode=='max' and self.valid_val > self.valid_val_b):
+                    best_valid = True
+                else:
+                    best_valid = False
+            else:
+                best_valid = True
+            if(best_valid):
+                self.valid_val_b = self.valid_val
+                best_validation_closure()
             for logger in self.loggers:
                 if(hasattr(logger, 'validation')):
-                    logger.validation(self.validation_value)
+                    logger.validation(self.valid_val)
 
     def end(self):
         if(self.__ended): return
