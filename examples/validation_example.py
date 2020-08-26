@@ -46,6 +46,5 @@ if __name__=='__main__':
         )
         sleep(args.time_interval)
 
-
     train_logger > seobin_logger.ExcelLogger('save.xlsx')
 
