@@ -147,7 +147,6 @@ class MainLogger(BaseLogger):
 
     def step(self, log_dict, validation_closure=None, validation_freq=1, 
             best_validation_closure=None, validation_mode='max'):
-
         assert self.__started and not self.__ended, 'Step must be called between .start() and .end()'
         assert set(log_dict.keys()) == set(self.state_dict.keys()), 'Need to feed all states.'
         assert validation_mode in ['min', 'max'], 'validation_mode should be min or max'
