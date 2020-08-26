@@ -33,7 +33,6 @@ if __name__=='__main__':
         ) 
     train_logger <= seobin_logger.TQDMLogger() 
     train_logger <= seobin_logger.NumpyLogger('test.npz') 
-    train_logger <= seobin_logger.ExcelLogger('save.xlsx')
     train_logger.start()
 
     for i in range(args.train_iteration):
@@ -46,4 +45,7 @@ if __name__=='__main__':
             validation_freq=10, validation_mode='min'
         )
         sleep(args.time_interval)
+
+
+    train_logger > seobin_logger.ExcelLogger('save.xlsx')
 

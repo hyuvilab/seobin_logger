@@ -87,6 +87,8 @@ class MainLogger(BaseLogger):
         atexit.register(self.end)
 
     def __le__(self, x):
+        assert not self.__started, 'Need to feed loggers before start'
+        assert not self.__ended, 'Logger has ended'
         x.main_logger = self
         if(type(x) in offline_logger_list):
             if(self.save_logger is None):
@@ -96,6 +98,12 @@ class MainLogger(BaseLogger):
             self.save_logger <= x
         else:
             self.loggers.append(x)
+
+    def __gt__(self, x):
+        assert self.save_logger is not None, 'Need to call start_save_logger before start!'
+        assert not self.__started, 'Need to feed loggers before start'
+        assert not self.__ended, 'Logger has ended'
+        self.save_logger <= x
 
     def __getattr__(self, name):
         for logger in self.loggers:
@@ -120,6 +128,13 @@ class MainLogger(BaseLogger):
         if(self.__started): return
         [logger.start() for logger in self.loggers]
         self.__started = True
+
+    def start_save_logger(self):
+        assert not self.__started, 'Need to call start_save_logger before start'
+        if(self.save_logger is not None): return
+        self.save_logger = SaveLogger()
+        self.save_logger.main_logger = self
+        self.loggers.append(self.save_logger)
 
     def get_state(self, key, avg=False):
         assert key in self.state_dict.keys(), 'key {} is not in state_dict'.format(key)
