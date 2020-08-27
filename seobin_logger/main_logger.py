@@ -1,10 +1,10 @@
 '''
 TODO:   
-        * add matplotlib
-        * add very simple one
+    * add matplotlib
+    * add very simple one
 
-        * Need to handle order of loggers
-        * Test time load for all loggers!
+    * Take the mean of some step interval to ease saving load!
+    * Test time load for all loggers!
 '''
 import atexit
 from .excel_logger import ExcelLogger

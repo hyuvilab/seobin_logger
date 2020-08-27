@@ -8,16 +8,14 @@ import subprocess
 # https://www.tensorflow.org/tensorboard/image_summaries
 # https://www.youtube.com/watch?v=91J7iQLq-6U
 '''
-TODO:   * Make tensorboard webserver refreshing real-time >> let's not implement this.
-        * Run tensorboard server on .start() given on flag >> done.
-
-        * Change torch tensorboard to tensorboardX
-        * Handle other stuff than scalars.. (histogram etc..)
+TODO: 
+    * Change torch tensorboard to tensorboardX
+    * Handle other stuff than scalars.. (histogram etc..)
+    * Make overlapping graphs (https://stackoverflow.com/questions/37146614/tensorboard-plot-training-and-validation-losses-on-the-same-graph/62203250#62203250)
 '''
 
 class TensorboardLogger(BaseLogger):
-    r'''
-    TensorboardLogger
+    r'''TensorboardLogger
 
         [*] tensorboard --logdir tensorboard_test/ --host 166.104.140.111
     '''
@@ -50,6 +48,7 @@ class TensorboardLogger(BaseLogger):
         self.writer.add_scalar('validation', val, self.main_logger.global_iter)
 
     def end(self):
+        self.writer.close()
         if(self.run_server and hasattr(self, 'tensorboard_proc')):
             self.tensorboard_proc.kill()
 
