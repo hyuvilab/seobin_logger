@@ -1,6 +1,7 @@
 from .main_logger import BaseLogger
 from torch.utils.tensorboard import SummaryWriter
 import os
+import shutil
 import subprocess
 # https://tensorboardx.readthedocs.io/en/latest/tensorboard.html
 
@@ -28,12 +29,13 @@ class TensorboardLogger(BaseLogger):
 
     def start(self):
         super(TensorboardLogger, self).start()
-        self.writer = SummaryWriter(log_dir='{}/{}'.format(self.log_base, self.log_dir), flush_secs=1.)
+        logdir = os.path.join(self.log_base, self.log_dir)
+        if(os.path.exists(logdir)): shutil.rmtree(logdir)
+        self.writer = SummaryWriter(log_dir=logdir, flush_secs=1.)
         if(self.run_server):
             f = open(os.path.join(self.log_base, 'tensorboard_server_log.out'), 'w')
             self.tensorboard_proc = subprocess.Popen(
-                ['tensorboard', '--logdir', self.log_base, '--host', self.host],
-                stderr=f
+                ['tensorboard', '--logdir', self.log_base, '--host', self.host], stderr=f
             )
 
     def tensorboard_plot_image(self, name, image):
