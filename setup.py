@@ -9,6 +9,8 @@ setup(name='seobin_logger',
       author_email='seobinpark@hanyang.ac.kr',
       license='MIT',
       # Fill requirements!!
-      install_requires=[],
+      install_requires=[
+            'tensorboard', 'tensorboardX', 'tqdm', 'numpy', 'openpyxl'
+      ],
       packages=['seobin_logger'],
       zip_safe=False)

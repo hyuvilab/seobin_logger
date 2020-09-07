@@ -23,7 +23,7 @@ if __name__=='__main__':
 
     train_logger = seobin_logger.MainLogger([
         'random', 'noisy_linear', 'noisy_sinusoid', 'validation'
-        ], train_iter=args.train_iteration, step_size=7)
+        ], train_iter=args.train_iteration)
     train_logger <= seobin_logger.TensorboardLogger(
         args.tensorboard_log, run_server=True,
         host=args.tensorboard_host

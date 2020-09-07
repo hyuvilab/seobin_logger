@@ -1,6 +1,6 @@
 #from .main_logger import BaseLogger
 import numpy as np
-
+import os
 
 
 
@@ -17,5 +17,8 @@ class NumpyLogger():
         self.state_numbers = {}
 
     def end(self):
+        base_dir = os.path.split(self.save_path)[0]
+        if(not os.path.exists(base_dir)):
+            os.makedirs(base_dir)
         np.savez(self.save_path, **self.state_numbers)
     

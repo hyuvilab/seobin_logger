@@ -1,5 +1,6 @@
 #from .main_logger import BaseLogger
 from openpyxl import Workbook
+import os
 # https://myjamong.tistory.com/51
 '''
 TODO:   * Check time load
@@ -30,6 +31,10 @@ class ExcelLogger():
         return row
 
     def end(self):
+        base_dir = os.path.split(self.save_path)[0]
+        if(not os.path.exists(base_dir)):
+            os.makedirs(base_dir)
+
         self.workbook.active.append(list(self.state_numbers.keys()))
         max_length = max([len(self.state_numbers[state]) for state in self.state_numbers.keys()])
         for i in range(max_length):
