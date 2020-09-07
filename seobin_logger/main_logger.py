@@ -80,7 +80,6 @@ class MainLogger(BaseLogger):
         self.__compile_state_list(state_list)
         self.__started = False
         self.__ended = False
-        atexit.register(self.end)
 
     def __le__(self, x):
         assert not self.__started, 'Need to feed loggers before start'
@@ -131,6 +130,7 @@ class MainLogger(BaseLogger):
         if(self.__started): return
         [logger.start() for logger in self.loggers]
         self.__started = True
+        atexit.register(self.end)
 
     def start_save_logger(self):
         assert not self.__started, 'Need to call start before start_save_logger'
