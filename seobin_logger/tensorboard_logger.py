@@ -1,5 +1,6 @@
 from .main_logger import BaseLogger
-from torch.utils.tensorboard import SummaryWriter
+#from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter
 import os
 import shutil
 import subprocess
@@ -45,9 +46,6 @@ class TensorboardLogger(BaseLogger):
     def step(self, log_dict):
         for key in log_dict.keys():
             self.writer.add_scalar(key, log_dict[key], self.main_logger.global_iter)
-
-    def validation(self, val):
-        self.writer.add_scalar('validation', val, self.main_logger.global_iter)
 
     def end(self):
         self.writer.close()
