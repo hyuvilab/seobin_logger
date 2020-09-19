@@ -1,26 +1,26 @@
 from .main_logger import BaseLogger
-#from torch.utils.tensorboard import SummaryWriter
 from tensorboardX import SummaryWriter
 import os
 import shutil
 import subprocess
 # https://tensorboardx.readthedocs.io/en/latest/tensorboard.html
-
 # https://pytorch.org/docs/stable/tensorboard.html
 # https://www.tensorflow.org/tensorboard/image_summaries
 # https://www.youtube.com/watch?v=91J7iQLq-6U
 '''
 TODO: 
-    * Change torch tensorboard to tensorboardX
     * Handle other stuff than scalars.. (histogram etc..)
-    * Make overlapping graphs (https://stackoverflow.com/questions/37146614/tensorboard-plot-training-and-validation-losses-on-the-same-graph/62203250#62203250)
 '''
 
 class TensorboardLogger(BaseLogger):
-    r'''TensorboardLogger
+    r"""TensorboardLogger
 
-        [*] tensorboard --logdir tensorboard_test/ --host 166.104.140.111
-    '''
+    Args:
+        log_dir: Directory for tensorboard log output. It will be inside log_base directory
+        log_base: Base directory for all output from TensorboardLogger.
+        run_server: If True, run tensorboard server while from start() to end(). 
+        host: Host name fed into --host flag in tensorboard server. 
+    """
     def __init__(self, log_dir, log_base='tensorboard_logs', run_server=False, host='localhost'):
         super(TensorboardLogger, self).__init__()
         self.log_dir = log_dir
@@ -39,9 +39,13 @@ class TensorboardLogger(BaseLogger):
                 ['tensorboard', '--logdir', self.log_base, '--host', self.host], stderr=f
             )
 
-    def tensorboard_plot_image(self, name, image):
-        # Handle preprocessing image here?
-        self.writer.add_image(name, image, self.main_logger.global_iter)
+    def tensorboard_add_image(self, tag, image, walltime=None, dataformats='CHW'):
+        self.writer.add_image(tag, image, global_step=self.main_logger.global_iter,
+            walltime=walltime, dataformats=dataformats)
+
+    def tensorboard_add_histogram(self, tag, value, bins='tensorflow', walltime=None, max_bins=None):
+        self.writer.add_histogram(tag, value, global_step=self.main_logger.global_iter,
+            walltime=walltime, bins=bins, max_bins=max_bins)
 
     def step(self, log_dict):
         for key in log_dict.keys():
@@ -51,7 +55,3 @@ class TensorboardLogger(BaseLogger):
         self.writer.close()
         if(self.run_server and hasattr(self, 'tensorboard_proc')):
             self.tensorboard_proc.kill()
-
-
-
-

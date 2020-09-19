@@ -13,7 +13,7 @@ class ExcelLogger():
     r''' Excel Logger
     (Depricated. It is not optimized.)
 
-    args:   
+    Args:   
         save_path: *.xlsx file name.
 
     '''
@@ -32,7 +32,7 @@ class ExcelLogger():
 
     def end(self):
         base_dir = os.path.split(self.save_path)[0]
-        if(not os.path.exists(base_dir)):
+        if(not os.path.exists(base_dir) and base_dir != ''):
             os.makedirs(base_dir)
 
         self.workbook.active.append(list(self.state_numbers.keys()))

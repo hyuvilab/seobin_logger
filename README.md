@@ -9,6 +9,10 @@ An integrated logger for machine learning..
 ```console
 foo@bar:~/seobin_logger $ pip install .
 ```
+or
+```console
+foo@bar:~/seobin_logger $ pip install git+https://github.com/hyuvilab/seobin_logger.git
+```
 
 ## Usage
 

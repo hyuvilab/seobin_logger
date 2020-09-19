@@ -8,6 +8,7 @@ TODO:
 '''
 import atexit
 from numbers import Number
+from collections.abc import Iterable
 from .excel_logger import ExcelLogger
 from .numpy_logger import NumpyLogger
 offline_logger_list = [ExcelLogger, NumpyLogger]
@@ -60,7 +61,7 @@ class SaveLogger(BaseLogger):
 
 
 class MainLogger(BaseLogger):
-    r''' Main Logger to initiate logging
+    r""" Main Logger to initiate logging
 
     Args: 
         state_list: List of states. They should all be fed to step afterwards.
@@ -70,7 +71,7 @@ class MainLogger(BaseLogger):
         start: Starts the logger
         step: Main function for logging step. 
         end: Ends the logger safely. 
-    '''
+    """
     def __init__(self, state_list, train_iter=None, step_size=1):
         self.global_iter = 0
         self.train_iter = train_iter
@@ -114,16 +115,25 @@ class MainLogger(BaseLogger):
             self.state_dict[state] = ExactAverageMeter()
 
     def __read_value(self, value):
-        if(isinstance(value, Number)):
-            return value, self.step_size
+        # Need more strict typing here!
+        if(isinstance(value, Iterable) and len(value) == 2):
+            if(self.global_iter % value[1] == 0):
+                if(value[0] is None):
+                    return None, value[1]
+                elif(isinstance(value[0], Number)):
+                    return value[0], value[1]
+                elif(callable(value[0])):
+                    return value[0](), value[1]
+            else:
+                return None, value[1]
         else:
-            # Some assertion here
-            pass
-
-        if(self.global_iter % value[1] != 0):
-            return None, None
-        else:
-            return value[0](), value[1]
+            if(value is None):
+                return None, self.step_size
+            elif(isinstance(value, Number)):
+                return value, self.step_size
+            elif(callable(value)):
+                return value(), self.step_size
+        raise ValueError('Wrong value type fed to log dictionary: {}'.format(value))
 
 
     def start(self):
